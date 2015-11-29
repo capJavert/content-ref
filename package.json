@@ -1,0 +1,29 @@
+{
+  "title": "Content Referrer",
+  "name": "content-ref",
+  "version": "0.0.2",
+  "description": "Waiting for new trailer, blog post or something else? You are tired of constantly clicking refresh button, use this plugin to automate process. Check URL for specific keywords that you define in options with one click of a button.",
+  "main": "index.js",
+  "author": "capJavert",
+  "engines": {
+    "firefox": ">=38.0a1"
+  },
+  "license": "MIT",
+  "keywords": [
+    "jetpack"
+  ],
+  "preferences": [{
+        "name": "contentRefUrl",
+        "title": "Ref URL",
+        "description": "URL to check for keywords",
+        "type": "string",
+        "value": "http://batman-news.com"
+    },
+    {
+        "name": "contentRefKeywords",
+        "title": "Ref Keywords",
+        "description": "Keywords to check URL for (';' separated)",
+        "type": "string",
+        "value": "new;trailer;"
+    }]
+}
