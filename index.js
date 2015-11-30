@@ -1,36 +1,148 @@
 var self = require('sdk/self');
+var panels = require("sdk/panel");
+var buttons = require('sdk/ui/button/toggle');
 
-var buttons = require('sdk/ui/button/action');
+var button = buttons.ToggleButton({
+    id: "content-ref",
+    label: "Ref It!",
+    icon: {
+        "16": "./icon-16.png",
+        "32": "./icon-32.png",
+        "64": "./icon-64.png"
+    },
 
-var button = buttons.ActionButton({
-  id: "content-ref",
-  label: "Ref It!",
-  icon: {
-    "16": "./icon-16.png",
-    "32": "./icon-32.png",
-    "64": "./icon-64.png"
-  },
-  onClick: handleClick
+
+    badge: null,
+    badgeColor: "#f00",
+    onChange: changed,
+    onChange: handleClick,
+    onClick: disableForThisWindow
 });
 
+function disableForThisWindow(state) {
+    button.state("window", {
+        disabled: true
+    });
+
+    button.state("window", {
+        icon: {
+            "16": "./icon-16-fade.png",
+            "32": "./icon-32-fade.png",
+            "64": "./icon-64-fade.png"
+        }
+    });
+}
+
+var panel = panels.Panel({
+    contentURL: self.data.url("../html/urlPanel.html"),
+    contentScriptFile: self.data.url("../scripts/urlList.js"),
+    onHide: handleHide
+});
+
+require("sdk/simple-prefs").on("", onPrefsChange);
+
+function intervalCheck (state, i, end) {
+    require("sdk/timers").setTimeout(function () {
+        button.state("window", {
+            disabled: true
+        });
+
+        button.state("window", {
+            icon: {
+                "16": "./icon-16-fade.png",
+                "32": "./icon-32-fade.png",
+                "64": "./icon-64-fade.png"
+            }
+        });
+
+        var refURLs = require("sdk/simple-prefs").prefs.contentRefUrl.split(";");
+        var refKeywords = require("sdk/simple-prefs").prefs.contentRefKeywords.split(";");
+
+        refUrls(state, refURLs, refKeywords, [], 0, refURLs.length);
+
+        intervalCheck(state, i, end);
+    }, require("sdk/simple-prefs").prefs.contentRefInterval*1000)
+}
+
+function onPrefsChange() {
+    if(require("sdk/simple-prefs").prefs.contentRefIntervalCheck) {
+        intervalCheck(button.state, 0, 0);
+    }
+}
+
+function handleChange(state) {
+    if (state.checked) {
+        panel.show({
+            position: button,
+            height: (36+notifications.length*47)
+        });
+
+        panel.port.emit("urlList", notifications);
+        notifications = [];
+        button.badge = null;
+    }
+}
+
+function handleHide() {
+    button.state('window', {checked: false});
+}
+
+function changed(state, refUpdates) {
+    if(refUpdates>0) button.badge = refUpdates;
+    else button.badge = null;
+}
+
+function refUrls(state, refURLs, refKeywords, found, i, end) {
+    if(refURLs[i] == '') {
+        i++;
+        refUrls(state, refURLs, refKeywords, found, i, end);
+    }
+
+    pageWorker = require("sdk/page-worker").Page({
+        //contentScript: "self.port.emit('domHTML', {html:document.body.innerHTML, head:document.getElementsByTagName('link')});",
+        contentScriptFile: self.data.url("../scripts/urlInfo.js"),
+        contentURL: refURLs[i]
+    });
+
+    pageWorker.port.on("document", function(doc) {
+        var matches = 0;
+        for(j=0;j<refKeywords.length;j++) {
+            if(doc.DOM.search(refKeywords[j])>0) {
+                //require('sdk/tabs').open(refURL);
+                matches++;
+            }
+        }
+
+        if(matches)
+            found[i] = {url:refURLs[i], favicon:doc.favicon, title:doc.title.substr(0, 36)+'...', matches:matches};
+
+        if (++i<end) refUrls(state, refURLs, refKeywords, found, i, end);
+        else  {
+            changed(state, found.length);
+            notifications = found;
+
+            button.state("window", {
+                disabled: false
+            });
+
+            button.state("window", {
+                icon: {
+                    "16": "./icon-16.png",
+                    "32": "./icon-32.png",
+                    "64": "./icon-64.png"
+            }});
+        }
+    });
+}
+
+var notifications = [];
 function handleClick(state) {
-	var refURL = require("sdk/simple-prefs").prefs.contentRefUrl;
-	var refKeywords = require("sdk/simple-prefs").prefs.contentRefKeywords.split(";");
-	
-	var found = false;
-	for(i=0;i<refKeywords.length-1;i++) {
-		var domHTML = "";
-		pageWorker = require("sdk/page-worker").Page({
-			contentScript: "domHTML = document.body.innerHTML;",
-			contentURL: refURL,
-		});
-		
-		if(domHTML.search(refKeywords[i])>0) {
-			require('sdk/tabs').open(refURL);
-			found = true;
-			break;
-		}
-	}
-	
-	if(!found) console.log('Nothing yet...');
+    if(button.badge == null) {
+        var refURLs = require("sdk/simple-prefs").prefs.contentRefUrl.split(";");
+        var refKeywords = require("sdk/simple-prefs").prefs.contentRefKeywords.split(";");
+
+        refUrls(state, refURLs, refKeywords, [], 0, refURLs.length);
+    } else {
+        handleChange(state);
+    }
 }

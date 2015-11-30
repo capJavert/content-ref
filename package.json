@@ -1,7 +1,7 @@
 {
   "title": "Content Referrer",
   "name": "content-ref",
-  "version": "0.0.2",
+  "version": "1.0.1",
   "description": "Waiting for new trailer, blog post or something else? You are tired of constantly clicking refresh button, use this plugin to automate process. Check URL for specific keywords that you define in options with one click of a button.",
   "main": "index.js",
   "author": "capJavert",
@@ -10,7 +10,7 @@
   },
   "license": "MIT",
   "keywords": [
-    "jetpack"
+    "Search Tools", "Social & Communication"
   ],
   "preferences": [{
         "name": "contentRefUrl",
@@ -24,6 +24,20 @@
         "title": "Ref Keywords",
         "description": "Keywords to check URL for (';' separated)",
         "type": "string",
-        "value": "new;trailer;"
+        "value": "new;trailer"
+    },
+    {
+        "name": "contentRefInterval",
+        "title": "URL check Interval",
+        "description": "Interval for auto check of defined URL (defined in seconds)",
+        "type": "integer",
+        "value": 120
+    },
+    {
+        "description": "",
+        "type": "bool",
+        "name": "contentRefIntervalCheck",
+        "value": false,
+        "title": "Check URL periodacally."
     }]
 }
