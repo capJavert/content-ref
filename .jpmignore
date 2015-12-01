@@ -11,3 +11,7 @@
 # readme and git directory
 README.md
 .git
+
+#ignore files
+.gitignore
+.jpmignore

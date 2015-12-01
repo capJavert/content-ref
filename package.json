@@ -14,22 +14,22 @@
   ],
   "preferences": [{
         "name": "contentRefUrl",
-        "title": "Ref URL",
-        "description": "URL to check for keywords",
+        "title": "Ref URLs",
+        "description": "URLs to check for keywords (';' separated)",
         "type": "string",
-        "value": "http://batman-news.com"
+        "value": "https://www.youtube.com/user/WarnerBrosPictures/videos"
     },
     {
         "name": "contentRefKeywords",
         "title": "Ref Keywords",
-        "description": "Keywords to check URL for (';' separated)",
+        "description": "Keywords to check URLs for (';' separated)",
         "type": "string",
-        "value": "new;trailer"
+        "value": "Batman"
     },
     {
         "name": "contentRefInterval",
         "title": "URL check Interval",
-        "description": "Interval for auto check of defined URL (defined in seconds)",
+        "description": "Interval for auto check of defined URLs (defined in seconds)",
         "type": "integer",
         "value": 120
     },
@@ -38,6 +38,6 @@
         "type": "bool",
         "name": "contentRefIntervalCheck",
         "value": false,
-        "title": "Check URL periodacally."
+        "title": "Check URLs periodacally."
     }]
 }

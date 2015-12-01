@@ -70,6 +70,12 @@ function onPrefsChange() {
     }
 }
 
+//var listener = 'false';
+panel.port.on("click-link", function(data) {
+    //listener = data.listener;
+    require("sdk/tabs").open(data.url);
+});
+
 function handleChange(state) {
     if (state.checked) {
         panel.show({
@@ -77,7 +83,7 @@ function handleChange(state) {
             height: (36+notifications.length*47)
         });
 
-        panel.port.emit("urlList", notifications);
+        panel.port.emit("urlList", {notifications:notifications});
         notifications = [];
         button.badge = null;
     }
@@ -99,7 +105,6 @@ function refUrls(state, refURLs, refKeywords, found, i, end) {
     }
 
     pageWorker = require("sdk/page-worker").Page({
-        //contentScript: "self.port.emit('domHTML', {html:document.body.innerHTML, head:document.getElementsByTagName('link')});",
         contentScriptFile: self.data.url("../scripts/urlInfo.js"),
         contentURL: refURLs[i]
     });
@@ -108,7 +113,6 @@ function refUrls(state, refURLs, refKeywords, found, i, end) {
         var matches = 0;
         for(j=0;j<refKeywords.length;j++) {
             if(doc.DOM.search(refKeywords[j])>0) {
-                //require('sdk/tabs').open(refURL);
                 matches++;
             }
         }
