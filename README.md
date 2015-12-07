@@ -1,3 +1,4 @@
+<h1>Content Referrer</h1>
 <h2>Firefox plugin</h2>
 <h3>About</h3>
 <p>
