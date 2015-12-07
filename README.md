@@ -2,7 +2,9 @@
 <h2>Firefox plugin</h2>
 <h3>About</h3>
 <p>
-Waiting for new trailer, blog post or something else? You are tired of constantly clicking refresh button, use this plugin to automate process. Check URL for specific keywords that you define in options with one click of a button.
+Waiting for new trailer, blog post or something else? You are tired of constantly clicking refresh button, use this plugin to automate process. Check URL for specific keywords that you define in options with one click of a button.<br />
+<br />
+This plugin adds option for Firefox to check some page content without really loading the page inside a browser. Plugin checks some defined URLs for specific keywords.
 </p>
 
 <h3>Version 1.0.1</h3>
